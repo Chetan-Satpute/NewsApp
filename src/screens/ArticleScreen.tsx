@@ -1,4 +1,4 @@
-import React  from 'react';
+import React from 'react';
 import {View, StyleSheet, Text, Image, ScrollView, Button} from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 
@@ -25,7 +25,11 @@ const ArticleScreen = () => {
   let articleParagraphs: JSX.Element[] = [];
 
   if (data.content) {
-    articleParagraphs = data.content.map(text => <Text className='text-neutral-200'>{text}</Text>);
+    articleParagraphs = data.content.map((text, index) => (
+      <Text key={index} className="text-neutral-200">
+        {text}
+      </Text>
+    ));
   }
 
   return (

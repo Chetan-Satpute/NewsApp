@@ -1,23 +1,10 @@
 import React from 'react';
 import {Text, View, Image, StyleSheet} from 'react-native';
+import {NewsArticle} from '../redux/news/newsSlice';
 
 import {formatDate} from '../utils/dateUtils';
 
-interface NewsItem {
-  source: {
-    id: string;
-    name: string;
-  };
-  author: string;
-  title: string;
-  description: string;
-  url: string;
-  urlToImage: string;
-  publishedAt: string;
-  content: string;
-}
-
-const NewsCard = (props: NewsItem) => {
+const NewsCard = (props: NewsArticle) => {
   const date = new Date(props.publishedAt);
 
   return (

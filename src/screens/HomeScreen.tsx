@@ -1,6 +1,7 @@
 import React from 'react';
 import {Text, View, ScrollView} from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
+
 import NewsList from '../components/NewsList';
 
 const HomeScreen = () => {
