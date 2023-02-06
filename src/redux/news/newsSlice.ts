@@ -16,17 +16,23 @@ export interface NewsArticle {
 }
 
 export interface News {
+  loading: boolean;
   articles: NewsArticle[];
 }
 
 const initialState: News = {
+  loading: true,
   articles: [],
 };
 
 export const newsSlice = createSlice({
   name: 'news',
   initialState,
-  reducers: {},
+  reducers: {
+    setLoading: (state, action: PayloadAction<boolean>) => {
+      state.loading = action.payload;
+    },
+  },
   extraReducers(builder) {
     builder.addCase(
       fetchArticles.fulfilled,
@@ -42,10 +48,9 @@ export const fetchArticles = createAsyncThunk(
   async () => {
     const data = (await getNews()) as News;
 
-    console.log(data);
-
     return data;
   },
 );
 
 export const newsReducer = newsSlice.reducer;
+export const {setLoading} = newsSlice.actions;

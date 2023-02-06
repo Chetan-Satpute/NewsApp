@@ -22,7 +22,7 @@ const NewsList = () => {
     <FlatList
       className="flex-1 bg-neutral-800"
       data={articles}
-      renderItem={({item}) => <NewsCard {...item} />}
+      renderItem={({item}) => <NewsCard url={item.url} />}
       keyExtractor={item => item.url}
     />
   );
