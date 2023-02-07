@@ -1,33 +1,56 @@
-import React from 'react';
-import {Text, View, ScrollView} from 'react-native';
+import React, {useEffect} from 'react';
+import {Text, TouchableWithoutFeedback, View} from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
+import NewsCategory from '../components/NewsCategory';
+import {useDispatch, useSelector} from 'react-redux';
+import {fetchArticles, NewsArticle} from '../redux/news/newsSlice';
 
 import NewsList from '../components/NewsList';
+import {Store} from '../redux/store';
+import {AnyAction, ThunkDispatch} from '@reduxjs/toolkit';
+import LoadingSpinner from '../components/LoadingSpinner';
+import {NativeStackScreenProps} from '@react-navigation/native-stack';
+import {RootParamList} from '../../App';
 
-const HomeScreen = () => {
+type Props = NativeStackScreenProps<RootParamList, 'Home'>;
+
+const HomeScreen = (props: Props) => {
+  const loading = useSelector<Store, boolean>(state => state.news.loading);
+  const articles = useSelector<Store, NewsArticle[]>(
+    state => state.news.articles,
+  );
+  const dispatch = useDispatch<ThunkDispatch<Store, any, AnyAction>>();
+
+  useEffect(() => {
+    dispatch(fetchArticles());
+  }, [dispatch]);
+
   return (
-    <View className="flex-1">
+    <View className="flex-1 bg-neutral-900">
       <View className="flex-row justify-between items-center p-3 bg-blue-200 bg-neutral-800">
         <Text className="text-xl font-bold text-neutral-200">NewsApp</Text>
-        <Icon name="search" size={20} color="#fff" />
+        <View className="flex-row">
+          <Icon.Button
+            name="search"
+            size={20}
+            color="#fff"
+            backgroundColor="transparent"
+            onPress={() => {}}
+          />
+
+          <Icon.Button
+            name="bookmarks"
+            size={20}
+            color="#fff"
+            backgroundColor="transparent"
+            onPress={() => props.navigation.navigate('Bookmarks')}
+          />
+        </View>
       </View>
 
-      <ScrollView
-        className="bg-neutral-700 flex-row grow-0"
-        horizontal={true}
-        showsHorizontalScrollIndicator={false}>
-        <Text className="px-3 p-3 text-neutral-400">general</Text>
-        <Text className="px-3 p-3 text-neutral-200 border-b-2 border-blue-500">
-          business
-        </Text>
-        <Text className="px-3 p-3 text-neutral-400">entertainment</Text>
-        <Text className="px-3 p-3 text-neutral-400">health</Text>
-        <Text className="px-3 p-3 text-neutral-400">science</Text>
-        <Text className="px-3 p-3 text-neutral-400">sports</Text>
-        <Text className="px-3 p-3 text-neutral-400">technology</Text>
-      </ScrollView>
+      <NewsCategory />
 
-      <NewsList />
+      {loading ? <LoadingSpinner /> : <NewsList articles={articles} />}
     </View>
   );
 };

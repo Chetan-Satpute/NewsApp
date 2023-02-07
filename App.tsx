@@ -6,11 +6,13 @@ import {Provider} from 'react-redux';
 import {store} from './src/redux/store';
 
 import ArticleScreen from './src/screens/ArticleScreen';
+import BookmarkScreen from './src/screens/BookmarkScreen';
 import HomeScreen from './src/screens/HomeScreen';
 
 export type RootParamList = {
   Home: undefined;
   Article: {url: string};
+  Bookmarks: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootParamList>();
@@ -30,6 +32,7 @@ const App = () => {
               component={ArticleScreen}
               initialParams={{url: ''}}
             />
+            <Stack.Screen name="Bookmarks" component={BookmarkScreen} />
           </Stack.Navigator>
         </NavigationContainer>
       </Provider>

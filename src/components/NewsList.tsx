@@ -1,27 +1,18 @@
-import {AnyAction, ThunkDispatch} from '@reduxjs/toolkit';
-import React, {useEffect} from 'react';
+import React from 'react';
 import {FlatList} from 'react-native';
-import {useDispatch, useSelector} from 'react-redux';
-import {fetchArticles, NewsArticle} from '../redux/news/newsSlice';
-import {Store} from '../redux/store';
 
 import NewsCard from './NewsCard';
+import {NewsArticle} from '../redux/news/newsSlice';
 
-const NewsList = () => {
-  const articles = useSelector<Store, NewsArticle[]>(state => {
-    return state.news.articles;
-  });
+interface Props {
+  articles: NewsArticle[];
+}
 
-  const dispatch = useDispatch<ThunkDispatch<Store, any, AnyAction>>();
-
-  useEffect(() => {
-    dispatch(fetchArticles());
-  }, [dispatch]);
-
+const NewsList = (props: Props) => {
   return (
     <FlatList
       className="flex-1 bg-neutral-800"
-      data={articles}
+      data={props.articles}
       renderItem={({item}) => <NewsCard url={item.url} />}
       keyExtractor={item => item.url}
     />

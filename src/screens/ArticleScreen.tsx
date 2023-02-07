@@ -10,10 +10,10 @@ import {
   TouchableWithoutFeedback,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 
 import {RootParamList} from '../../App';
-import {NewsArticle} from '../redux/news/newsSlice';
+import {NewsArticle, setBookmark, unsetBookmark} from '../redux/news/newsSlice';
 import {Store} from '../redux/store';
 
 type Props = NativeStackScreenProps<RootParamList, 'Article'>;
@@ -23,13 +23,50 @@ const ArticleScreen = (props: Props) => {
     state.news.articles.find(item => item.url === props.route.params.url),
   );
 
+  const bookmarked = useSelector<Store, boolean>(
+    state =>
+      article !== undefined && state.news.bookmarks[article?.url] !== undefined,
+  );
+
+  const dispatch = useDispatch();
+
+  const toggleBookmark = () => {
+    if (article) {
+      if (bookmarked) {
+        dispatch(unsetBookmark(article.url));
+      } else {
+        dispatch(setBookmark(article));
+      }
+    }
+  };
+
   return (
     <View className="flex-1">
       <View className="p-3 bg-blue-200 bg-neutral-800 flex-row justify-between">
-        <TouchableWithoutFeedback onPress={() => props.navigation.goBack()}>
-          <Icon name="arrow-back" size={25} color="#fff" />
-        </TouchableWithoutFeedback>
-        <Icon name="bookmark" size={20} color="#fff" />
+        <Icon.Button
+          name="arrow-back"
+          size={25}
+          color="#fff"
+          backgroundColor="transparent"
+          onPress={() => props.navigation.goBack()}
+        />
+        {bookmarked ? (
+          <Icon.Button
+            name="bookmark"
+            size={20}
+            color="#fff"
+            backgroundColor="transparent"
+            onPress={toggleBookmark}
+          />
+        ) : (
+          <Icon.Button
+            name="bookmark-outline"
+            size={20}
+            color="#fff"
+            backgroundColor="transparent"
+            onPress={toggleBookmark}
+          />
+        )}
       </View>
 
       {article && (
