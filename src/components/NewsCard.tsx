@@ -20,8 +20,8 @@ interface Props {
 
 const NewsCard = (props: Props) => {
   const navigation = useNavigation<NavigationProp<RootParamList>>();
-  const article = useSelector<Store, NewsArticle | undefined>(state =>
-    state.news.articles.find(item => item.url === props.url),
+  const article = useSelector<Store, NewsArticle | undefined>(
+    state => state.news.articles[props.url],
   );
 
   if (article === undefined) {
@@ -32,7 +32,7 @@ const NewsCard = (props: Props) => {
 
   return (
     <TouchableWithoutFeedback
-      onPress={() => navigation.navigate('Article', {url: props.url})}>
+      onPress={() => navigation.navigate('Article', {url: article.url})}>
       <View className="flex-row p-1 border-b border-neutral-500">
         {article.urlToImage && (
           <View className="basis-1/4">

@@ -5,14 +5,13 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import {useSelector} from 'react-redux';
 import {RootParamList} from '../../App';
 import NewsList from '../components/NewsList';
-import {NewsArticle} from '../redux/news/newsSlice';
 import {Store} from '../redux/store';
 
 type Props = NativeStackScreenProps<RootParamList, 'Bookmarks'>;
 
 const BookmarkScreen = (props: Props) => {
-  const bookmarks = useSelector<Store, NewsArticle[]>(state =>
-    Object.values(state.news.bookmarks),
+  const bookmarks = useSelector<Store, string[]>(state =>
+    Object.values(state.news.bookmarks).map(article => article.url),
   );
 
   return (
@@ -29,7 +28,7 @@ const BookmarkScreen = (props: Props) => {
         <Text className="text-lg font-bold text-neutral-200">Bookmarks</Text>
       </View>
 
-      <NewsList articles={bookmarks} />
+      <NewsList articleUrls={bookmarks} loading={false} />
     </View>
   );
 };

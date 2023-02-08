@@ -1,26 +1,19 @@
-import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import React from 'react';
-import {
-  View,
-  StyleSheet,
-  Text,
-  Image,
-  ScrollView,
-  Button,
-  TouchableWithoutFeedback,
-} from 'react-native';
-import Icon from 'react-native-vector-icons/Ionicons';
 import {useDispatch, useSelector} from 'react-redux';
+import Icon from 'react-native-vector-icons/Ionicons';
+import {NativeStackScreenProps} from '@react-navigation/native-stack';
+import {View, StyleSheet, Text, Image, ScrollView} from 'react-native';
 
 import {RootParamList} from '../../App';
 import {NewsArticle, setBookmark, unsetBookmark} from '../redux/news/newsSlice';
 import {Store} from '../redux/store';
+import OpenURLButton from '../components/OpenURLButton';
 
 type Props = NativeStackScreenProps<RootParamList, 'Article'>;
 
 const ArticleScreen = (props: Props) => {
-  const article = useSelector<Store, NewsArticle | undefined>(state =>
-    state.news.articles.find(item => item.url === props.route.params.url),
+  const article = useSelector<Store, NewsArticle | undefined>(
+    state => state.news.articles[props.route.params.url],
   );
 
   const bookmarked = useSelector<Store, boolean>(
@@ -88,7 +81,7 @@ const ArticleScreen = (props: Props) => {
           </View>
 
           <View className="py-3 px-10">
-            <Button onPress={() => {}} title="Visit Article" />
+            <OpenURLButton url={article.url}>Visit Article</OpenURLButton>
           </View>
         </ScrollView>
       )}

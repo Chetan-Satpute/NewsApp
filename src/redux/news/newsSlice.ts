@@ -1,5 +1,5 @@
 import {createAsyncThunk, createSlice, PayloadAction} from '@reduxjs/toolkit';
-import getNews from '../../api/news/getNews';
+import getNews, {getNewsByCategory} from '../../api/news/getNews';
 import {Store} from '../store';
 
 export interface NewsArticle {
@@ -7,7 +7,7 @@ export interface NewsArticle {
     id: string;
     name: string;
   };
-  author: string;
+  author: string | null;
   title: string;
   description: string;
   url: string;
@@ -29,14 +29,14 @@ export enum Category {
 export interface News {
   category: Category;
   loading: boolean;
-  articles: NewsArticle[];
+  articles: {[id: string]: NewsArticle};
   bookmarks: {[id: string]: NewsArticle};
 }
 
 const initialState: News = {
   category: Category.GENERAL,
   loading: true,
-  articles: [],
+  articles: {},
   bookmarks: {},
 };
 
@@ -50,6 +50,11 @@ export const newsSlice = createSlice({
     setCategory: (state, action: PayloadAction<Category>) => {
       state.category = action.payload;
     },
+    loadArticles: (state, action: PayloadAction<NewsArticle[]>) => {
+      for (let article of action.payload) {
+        state.articles[article.url] = article;
+      }
+    },
     setBookmark: (state, action: PayloadAction<NewsArticle>) => {
       const article = action.payload;
       state.bookmarks[article.url] = article;
@@ -58,16 +63,16 @@ export const newsSlice = createSlice({
       delete state.bookmarks[action.payload];
     },
   },
-  extraReducers(builder) {
-    builder.addCase(
-      fetchArticles.fulfilled,
-      (state, action: PayloadAction<News>) => {
-        state.articles = [...action.payload.articles];
-        state.loading = false;
-      },
-    );
-  },
 });
+
+export const newsReducer = newsSlice.reducer;
+export const {
+  setLoading,
+  setCategory,
+  setBookmark,
+  unsetBookmark,
+  loadArticles,
+} = newsSlice.actions;
 
 export const fetchArticles = createAsyncThunk(
   'news/fetchArticles',
@@ -75,13 +80,9 @@ export const fetchArticles = createAsyncThunk(
     dispatch(setLoading(true));
 
     const {news} = getState() as Store;
-    const data = (await getNews(news.category)) as News;
+    const articles = await getNewsByCategory(news.category);
 
-    await new Promise(resolve => setTimeout(resolve, 2000));
-
-    return data;
+    dispatch(loadArticles(articles));
+    dispatch(setLoading(false));
   },
 );
-
-export const newsReducer = newsSlice.reducer;
-export const {setLoading, setCategory, setBookmark, unsetBookmark} = newsSlice.actions;

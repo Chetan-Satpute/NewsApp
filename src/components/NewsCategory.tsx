@@ -2,7 +2,7 @@ import {AnyAction, ThunkDispatch} from '@reduxjs/toolkit';
 import React from 'react';
 import {ScrollView, Text, TouchableWithoutFeedback} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
-import {Category, fetchArticles, setCategory} from '../redux/news/newsSlice';
+import {Category, setCategory} from '../redux/news/newsSlice';
 import {Store} from '../redux/store';
 
 const NewsCategory = () => {
@@ -14,7 +14,6 @@ const NewsCategory = () => {
 
   const updateCategory = (title: Category) => {
     dispatch(setCategory(title));
-    dispatch(fetchArticles());
   };
 
   return (

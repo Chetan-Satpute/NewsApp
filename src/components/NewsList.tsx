@@ -1,20 +1,28 @@
 import React from 'react';
-import {FlatList} from 'react-native';
+import {ActivityIndicator, FlatList, View} from 'react-native';
 
 import NewsCard from './NewsCard';
-import {NewsArticle} from '../redux/news/newsSlice';
 
 interface Props {
-  articles: NewsArticle[];
+  articleUrls: string[];
+  loading: boolean;
 }
 
 const NewsList = (props: Props) => {
+  if (props.loading) {
+    return (
+      <View className="flex-1 justify-center items-center">
+        <ActivityIndicator size="large" color="#3b82f6" />
+      </View>
+    );
+  }
+
   return (
     <FlatList
       className="flex-1 bg-neutral-800"
-      data={props.articles}
-      renderItem={({item}) => <NewsCard url={item.url} />}
-      keyExtractor={item => item.url}
+      data={props.articleUrls}
+      renderItem={({item}) => <NewsCard url={item} />}
+      keyExtractor={item => item}
     />
   );
 };

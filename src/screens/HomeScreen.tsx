@@ -1,29 +1,39 @@
-import React, {useEffect} from 'react';
-import {Text, TouchableWithoutFeedback, View} from 'react-native';
-import Icon from 'react-native-vector-icons/Ionicons';
-import NewsCategory from '../components/NewsCategory';
+import React, {useEffect, useState} from 'react';
+import {Text, View} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
-import {fetchArticles, NewsArticle} from '../redux/news/newsSlice';
-
-import NewsList from '../components/NewsList';
-import {Store} from '../redux/store';
+import Icon from 'react-native-vector-icons/Ionicons';
 import {AnyAction, ThunkDispatch} from '@reduxjs/toolkit';
-import LoadingSpinner from '../components/LoadingSpinner';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
+
+import {Store} from '../redux/store';
 import {RootParamList} from '../../App';
+import NewsList from '../components/NewsList';
+import NewsCategory from '../components/NewsCategory';
+import {Category, loadArticles} from '../redux/news/newsSlice';
+import {getNewsByCategory} from '../api/news/getNews';
 
 type Props = NativeStackScreenProps<RootParamList, 'Home'>;
 
 const HomeScreen = (props: Props) => {
-  const loading = useSelector<Store, boolean>(state => state.news.loading);
-  const articles = useSelector<Store, NewsArticle[]>(
-    state => state.news.articles,
-  );
+  const [loading, setLoading] = useState(true);
+  const [articleUrls, setArticleUrls] = useState<string[]>([]);
   const dispatch = useDispatch<ThunkDispatch<Store, any, AnyAction>>();
+  const category = useSelector<Store, Category>(state => state.news.category);
 
   useEffect(() => {
-    dispatch(fetchArticles());
-  }, [dispatch]);
+    setLoading(true);
+
+    getNewsByCategory(category).then(articles => {
+      console.log('HERE');
+      dispatch(loadArticles(articles));
+
+      setArticleUrls(articles.map(article => article.url));
+
+      setLoading(false);
+    });
+  }, [dispatch, category]);
+
+  console.log(articleUrls);
 
   return (
     <View className="flex-1 bg-neutral-900">
@@ -35,7 +45,7 @@ const HomeScreen = (props: Props) => {
             size={20}
             color="#fff"
             backgroundColor="transparent"
-            onPress={() => {}}
+            onPress={() => props.navigation.navigate('Search')}
           />
 
           <Icon.Button
@@ -50,7 +60,7 @@ const HomeScreen = (props: Props) => {
 
       <NewsCategory />
 
-      {loading ? <LoadingSpinner /> : <NewsList articles={articles} />}
+      <NewsList articleUrls={articleUrls} loading={loading} />
     </View>
   );
 };
